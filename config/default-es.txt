@@ -1,0 +1,6 @@
+input = input/plain_text/frases.txt
+models = [es_anonimization_core_lg, xx_ent_wiki_sm]
+type_of_models = [spacy, spacy]
+format = plain 
+anonym_method = label 
+output = output/output-default-es.jsonl

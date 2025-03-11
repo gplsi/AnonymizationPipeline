@@ -30,7 +30,7 @@ do-config:
 		-v ./truecaser:/home/anonym/truecaser \
 		-v ./config:/home/anonym/config \
 		anonymization \
-		-c config/$(CONFIG_FILE).txt
+		-c "config/$(CONFIG_FILE).txt"
 
 INPUT_FILE ?= .gitignore
 do-file:
@@ -41,5 +41,6 @@ do-file:
 		-v ./truecaser:/home/anonym/truecaser \
 		-v ./config:/home/anonym/config \
 		anonymization \
-		-c config/$(CONFIG_FILE).txt \
-		-i input/$(INPUT_FILE)
+		-c "config/$(CONFIG_FILE).txt" \
+		-i "input/$(INPUT_FILE)" \
+		-o "output/$(INPUT_FILE).jsonl"
