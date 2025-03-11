@@ -8,9 +8,10 @@ RUN apt-get update
 
 COPY min_req.txt /home/anonym/
 
-RUN python -m pip install --upgrade pip
+# RUN python -m pip install --upgrade pip
 RUN python -m pip install -r min_req.txt
 RUN pip install https://huggingface.co/PlanTL-GOB-ES/es_anonimization_core_lg/resolve/main/es_anonimization_core_lg-any-py3-none-any.whl
+RUN apt-get install -y g++ build-essential
 RUN pip install https://huggingface.co/spacy/xx_ent_wiki_sm/resolve/main/xx_ent_wiki_sm-any-py3-none-any.whl
 RUN python -m nltk.downloader punkt
 
