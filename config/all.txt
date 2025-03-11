@@ -1,0 +1,6 @@
+input = input/plain_text/frases.txt
+models = [es_anonimization_core_lg,xx_ent_wiki_sm,models/roberta_model_for_anonimization,models/ca_anonimization_core_lg]
+type_of_models = [spacy,spacy,huggingface,spacy]
+format = plain 
+anonym_method = label 
+output = output/output-merge-all.jsonl
