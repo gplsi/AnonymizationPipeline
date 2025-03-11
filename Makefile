@@ -44,3 +44,6 @@ do-file:
 		-c "config/$(CONFIG_FILE).txt" \
 		-i "input/$(INPUT_FILE)" \
 		-o "output/$(INPUT_FILE).jsonl"
+
+run-local:
+	python pipeline.py -c "config/$(CONFIG_FILE).txt" -i "input/$(INPUT_FILE)" -o "output/$(INPUT_FILE).jsonl"
