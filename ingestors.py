@@ -2,6 +2,7 @@ from __future__ import annotations
 
 # This file will contain the formatters for the jsonl files. 
 
+import os
 from abc import ABC, abstractmethod
 import json
 from typing import List, Optional
@@ -182,6 +183,7 @@ class ingestor(ABC):
             registry.spans = new_spans
 
     def save(self, output_path) -> None:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as o:
             for reg in tqdm(self.registries, "Saving Registries", total=len(self.registries)):
                 o.write(reg.toString())
