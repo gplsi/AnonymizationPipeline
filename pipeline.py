@@ -38,6 +38,8 @@ def main():
         help="Text file with list of labels to use by the Sensitive Recognition models")
     parser.add_argument("-r", "--regexes", type=str, \
         help="File containing regex for the regex identification in csv format", default="data/regex_definition.csv")
+    parser.add_argument("-s", "--store_original", action="store_true", \
+        help="Store original text in the registry", default=False)
 
     args = parser.parse_args()
     
@@ -49,6 +51,7 @@ def main():
     anonym_method : str = args.anonym_method
     labels : str = args.labels
     regex_definitions : str = args.regexes
+    store_original : bool = args.store_original
 
     assert len(model_paths) == len(model_types), "List of model paths and list of types must be of same length"
     label_list = None
@@ -89,7 +92,7 @@ def main():
             anonymizer = anonymize.RandomAnonym()
         else: 
             anonymizer = anonymize.AllAnonym()
-        ingestor.anonymize_registries(anonymizer)
+        ingestor.anonymize_registries(anonymizer, store_original=store_original)
 
     ingestor.save(output_path)
 

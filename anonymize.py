@@ -19,13 +19,15 @@ uppers: str = string.ascii_uppercase
 numbers: str = "0123456789"
 
 
-def anonymizeSpans(anonymizer : Anonymizer, spans: List[Span], text: str) -> Tuple[List[Span], str]:
+def anonymizeSpans(anonymizer : Anonymizer, spans: List[Span], text: str, store_original=False) -> Tuple[List[Span], str]:
     new_spans = []
     offset = 0
     for span in spans:
-        span["start"]+= offset
-        span["end"]+= offset
+        span["start"] += offset
+        span["end"] += offset
         new_span, new_text = anonymizer.anonymize(span, text)
+        if store_original:
+            new_span["original"] = text[span["start"] : span["end"]]
         text = new_text
         offset += new_span["end"] - span["end"]
         new_spans.append(new_span)

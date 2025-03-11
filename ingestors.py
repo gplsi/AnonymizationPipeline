@@ -151,8 +151,8 @@ class Streamingestor():
     def ingest_text(self, new_text):
         self.registry = SpacyRegistry.factory({"text": new_text, "ents": []})
 
-    def anonymize_registries(self, anonymizer : Anonymizer):
-        new_spans, new_text = anonymizeSpans(anonymizer, self.registry.spans, self.registry.text)
+    def anonymize_registries(self, anonymizer : Anonymizer, store_original : bool = False) -> None:
+        new_spans, new_text = anonymizeSpans(anonymizer, self.registry.spans, self.registry.text, store_original)
         self.registry.text = new_text
         self.registry.spans = new_spans
 
@@ -176,9 +176,9 @@ class ingestor(ABC):
                 reg = self.registryFactory(line)
                 self.registries.append(reg)
     
-    def anonymize_registries(self, anonymizer : Anonymizer):
+    def anonymize_registries(self, anonymizer : Anonymizer, store_original : bool = False) -> None:
         for registry in tqdm(self.registries, "Anonymizing Registries", total=len(self.registries)):
-            new_spans, new_text = anonymizeSpans(anonymizer, registry.spans, registry.text)
+            new_spans, new_text = anonymizeSpans(anonymizer, registry.spans, registry.text, store_original)
             registry.text = new_text
             registry.spans = new_spans
 
