@@ -40,6 +40,8 @@ def main():
         help="File containing regex for the regex identification in csv format", default="data/regex_definition.csv")
     parser.add_argument("-s", "--store_original", action="store_true", \
         help="Store original text in the registry", default=False)
+    parser.add_argument("-g", "--aggregate_output", action="store_true", \
+        help="Store all registries in a single JSON object", default=False)
 
     args = parser.parse_args()
     
@@ -52,6 +54,7 @@ def main():
     labels : str = args.labels
     regex_definitions : str = args.regexes
     store_original : bool = args.store_original
+    aggregate_output : bool = args.aggregate_output
 
     assert len(model_paths) == len(model_types), "List of model paths and list of types must be of same length"
     label_list = None
@@ -94,7 +97,7 @@ def main():
             anonymizer = anonymize.AllAnonym()
         ingestor.anonymize_registries(anonymizer, store_original=store_original)
 
-    ingestor.save(output_path)
+    ingestor.save(output_path, aggregate_output)
 
 
 if __name__ == "__main__":

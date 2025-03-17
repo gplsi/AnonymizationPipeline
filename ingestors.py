@@ -182,11 +182,23 @@ class ingestor(ABC):
             registry.text = new_text
             registry.spans = new_spans
 
-    def save(self, output_path) -> None:
+    def save(self, output_path, aggregated=False) -> None:
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as o:
-            for reg in tqdm(self.registries, "Saving Registries", total=len(self.registries)):
-                o.write(reg.toString())
+            if aggregated:
+                text = ""
+                spans = []
+                meta = []
+                for reg in tqdm(self.registries, "Aggregating Registries", total=len(self.registries)):
+                    current_len = len(text)
+                    text += reg.text
+                    spans += [ dict(span, start=span["start"] + current_len, end=span["end"] + current_len) for span in reg.spans]
+                    meta.append(reg.meta)
+                o.write(json.dumps({"text": text, "spans": spans, "meta": meta}, ensure_ascii=False) + "\n")                   
+
+            else:
+                for reg in tqdm(self.registries, "Saving Registries", total=len(self.registries)):
+                    o.write(reg.toString())
 
 class Prodigyingestor(ingestor):
     def __init__(self, input_file : str) -> None:
