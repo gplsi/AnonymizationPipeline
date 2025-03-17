@@ -1,0 +1,6 @@
+input = input/plain_text/frases.txt
+models = [xx_ent_wiki_sm]
+type_of_models = [spacy]
+format = plain 
+anonym_method = label 
+output = output/output-just-xx.jsonl

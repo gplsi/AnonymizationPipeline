@@ -1,0 +1,6 @@
+input = input/plain_text/frases.txt
+models = [models/ca_anonimization_core_lg, es_anonimization_core_lg]
+type_of_models = [spacy, spacy]
+format = plain 
+anonym_method = label 
+output = output/output-default-ca.jsonl

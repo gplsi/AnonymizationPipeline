@@ -1,0 +1,6 @@
+input = input/plain_text/frases.txt
+models = [models/roberta_model_for_anonimization]
+type_of_models = [huggingface]
+format = plain 
+anonym_method = label 
+output = output/output-just-roberta.jsonl
