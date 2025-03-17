@@ -9,6 +9,7 @@ from copy import deepcopy
 
 from sensitive_identification.sensitive_identifier import SensitiveIdentifier
 from truecaser.TrueCaser import TrueCaser
+from pathlib import Path
 
 tc = TrueCaser('truecaser/spanish.dist')
 
@@ -69,6 +70,40 @@ def main():
             ner_models.append(RoBERTaNameIdentifier(model_path, label_list))
     print("Finished loading model")
 
+    doc_queue = (
+        [(input_path, output_path)]
+        if Path(input_path).is_file()
+        else [
+            (file, str(Path(output_path) / file.relative_to(input_path)))
+            for file in Path(input_path).rglob('*') if file.is_file()
+        ]
+    )
+
+    for input_path, output_path in tqdm(doc_queue, "Processing documents"):
+        print(f"Processing {input_path} to {output_path}")
+        pipeline(
+            input_path,
+            output_path,
+            label_list,
+            ner_models,
+            input_format,
+            anonym_method,
+            regex_definitions,
+            store_original,
+            aggregate_output,
+        )
+
+def pipeline(
+        input_path : str,
+        output_path : str,
+        label_list : List[str],
+        ner_models : List[SensitiveIdentifier],
+        input_format : str,
+        anonym_method : str,
+        regex_definitions : str,
+        store_original : bool,
+        aggregate_output : bool
+):
     if input_format == "plain":
         ingestor = ingestors.PlainTextingestor(input_path)
     elif input_format == "jsonl":
