@@ -172,12 +172,12 @@ class ingestor(ABC):
     def read_file(self, input_path) -> None:
         #TODO: Think if the formatter should read all lines or process them in batches (low memory resources)
         with open(input_path, "r") as f:
-            for line in tqdm(f, "Ingesting registries", total=sum(1 for line in open(input_path, "r"))):
+            for line in tqdm(f, f"Ingesting registries ({input_path})", total=sum(1 for line in open(input_path, "r")), leave=False):
                 reg = self.registryFactory(line)
                 self.registries.append(reg)
     
     def anonymize_registries(self, anonymizer : Anonymizer, store_original : bool = False) -> None:
-        for registry in tqdm(self.registries, "Anonymizing Registries", total=len(self.registries)):
+        for registry in tqdm(self.registries, "Anonymizing Registries", total=len(self.registries), leave=False):
             new_spans, new_text = anonymizeSpans(anonymizer, registry.spans, registry.text, store_original)
             registry.text = new_text
             registry.spans = new_spans
@@ -189,7 +189,7 @@ class ingestor(ABC):
                 text = ""
                 spans = []
                 meta = []
-                for reg in tqdm(self.registries, "Aggregating Registries", total=len(self.registries)):
+                for reg in tqdm(self.registries, f"Aggregating Registries ({output_path})", total=len(self.registries), leave=False):
                     current_len = len(text)
                     text += reg.text
                     spans += [ dict(span, start=span["start"] + current_len, end=span["end"] + current_len) for span in reg.spans]
@@ -197,7 +197,7 @@ class ingestor(ABC):
                 o.write(json.dumps({"text": text, "spans": spans, "meta": meta}, ensure_ascii=False) + "\n")                   
 
             else:
-                for reg in tqdm(self.registries, "Saving Registries", total=len(self.registries)):
+                for reg in tqdm(self.registries, f"Saving Registries ({output_path})", total=len(self.registries), leave=False):
                     o.write(reg.toString())
 
 class Prodigyingestor(ingestor):

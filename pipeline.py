@@ -74,13 +74,12 @@ def main():
         [(input_path, output_path)]
         if Path(input_path).is_file()
         else [
-            (file, str(Path(output_path) / file.relative_to(input_path)))
+            (str(file), str(Path(output_path) / file.relative_to(input_path).with_suffix(".jsonl")))
             for file in Path(input_path).rglob('*') if file.is_file()
         ]
     )
 
     for input_path, output_path in tqdm(doc_queue, "Processing documents"):
-        print(f"Processing {input_path} to {output_path}")
         pipeline(
             input_path,
             output_path,
@@ -114,7 +113,7 @@ def pipeline(
 
     regex_identifier = RegexIdentifier(regex_definitions, label_list)
     
-    for reg in tqdm(ingestor.registries, "Sensitive data identification"):
+    for reg in tqdm(ingestor.registries, f"Sensitive data identification ({input_path})", leave=False):
         original_reg = deepcopy(reg)
         reg.text = tc.get_true_case(reg.text)
         regex_identifier.identify_sensitive(reg)
@@ -123,7 +122,6 @@ def pipeline(
         reg.text = original_reg.text
 
     if anonym_method != "none":
-        print("Instantiating anonymizer")
         if anonym_method == "label":
             anonymizer = anonymize.LabelAnonym()
         elif anonym_method == "random":
