@@ -45,5 +45,7 @@ do-file:
 		-i "input/$(INPUT_FILE)" \
 		-o "output/$(INPUT_FILE).jsonl"
 
+LABEL_VERSION ?= v1
+
 run-local:
-	python pipeline.py -c "config/$(CONFIG_FILE).txt" -i "input/$(INPUT_FILE)" -o "output/$(INPUT_FILE).jsonl" --store_original --aggregate_output
+	python pipeline.py -c "config/$(CONFIG_FILE).txt" -i "input/$(INPUT_FILE)" -o "output/$(INPUT_FILE).jsonl" --labels "input/$(INPUT_FILE).$(LABEL_VERSION).labels" --store_original --aggregate_output
