@@ -188,12 +188,13 @@ class ingestor(ABC):
             if aggregated:
                 text = ""
                 spans = []
-                meta = []
-                for reg in tqdm(self.registries, f"Aggregating Registries ({output_path})", total=len(self.registries), leave=False):
+                meta = {}
+                for line, reg in enumerate(tqdm(self.registries, f"Aggregating Registries ({output_path})", total=len(self.registries), leave=False)):
                     current_len = len(text)
                     text += reg.text
                     spans += [ dict(span, start=span["start"] + current_len, end=span["end"] + current_len) for span in reg.spans]
-                    meta.append(reg.meta)
+                    if reg.meta:
+                        meta[line] = reg.meta
                 o.write(json.dumps({"text": text, "spans": spans, "meta": meta}, ensure_ascii=False) + "\n")                   
 
             else:
