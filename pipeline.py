@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import anonymize
 import ingestors
 from sensitive_identification.name_identifiers import RoBERTaNameIdentifier, SpacyIdentifier
@@ -10,8 +10,6 @@ from copy import deepcopy
 from sensitive_identification.sensitive_identifier import SensitiveIdentifier
 from truecaser.TrueCaser import TrueCaser
 from pathlib import Path
-
-tc = TrueCaser('truecaser/spanish.dist')
 
 def get_labels(path : str) -> List[str]:
     label_list : List[str] = []
@@ -43,6 +41,8 @@ def main():
         help="Store original text in the registry", default=False)
     parser.add_argument("-g", "--aggregate_output", action="store_true", \
         help="Store all registries in a single JSON object", default=False)
+    parser.add_argument("--truecaser", type=str, \
+        help="Path to the truecaser model. Empty ("") to disable.", default="truecaser/spanish.dist")
 
     args = parser.parse_args()
     
@@ -56,6 +56,9 @@ def main():
     regex_definitions : str = args.regexes
     store_original : bool = args.store_original
     aggregate_output : bool = args.aggregate_output
+    truecaser_path : str = args.truecaser
+
+    tc = TrueCaser(truecaser_path) if truecaser_path else None
 
     assert len(model_paths) == len(model_types), "List of model paths and list of types must be of same length"
     label_list = None
@@ -90,6 +93,7 @@ def main():
             regex_definitions,
             store_original,
             aggregate_output,
+            tc,
         )
 
 def pipeline(
@@ -101,7 +105,8 @@ def pipeline(
         anonym_method : str,
         regex_definitions : str,
         store_original : bool,
-        aggregate_output : bool
+        aggregate_output : bool,
+        tc: Optional[TrueCaser],
 ):
     if input_format == "plain":
         ingestor = ingestors.PlainTextingestor(input_path)
@@ -115,7 +120,7 @@ def pipeline(
     
     for reg in tqdm(ingestor.registries, f"Sensitive data identification ({input_path})", leave=False):
         original_reg = deepcopy(reg)
-        reg.text = tc.get_true_case(reg.text)
+        reg.text = tc.get_true_case(reg.text) if tc else reg.text
         regex_identifier.identify_sensitive(reg)
         for ner_model in ner_models:
             ner_model.identify_sensitive(reg)
