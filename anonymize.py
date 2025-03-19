@@ -134,6 +134,7 @@ class AllAnonym(Anonymizer):
             "VEHICLE": self._replaceVEHICLE,
             "CARD": self._replaceCARD,
             "OTHER": self._replaceDefault,
+            "CODE": self._replaceDefault,
             "SENSITIVE": self._replaceDelete,
         }
 

@@ -1,0 +1,7 @@
+input = input/plain_text/frases.txt
+models = []
+type_of_models = []
+format = plain 
+anonym_method = label 
+output = output/output-no-ner.jsonl
+regexes = "data/regex_definition_new.csv"
