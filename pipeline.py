@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 import anonymize
 import ingestors
@@ -43,6 +44,8 @@ def main():
         help="Store all registries in a single JSON object", default=False)
     parser.add_argument("--truecaser", type=str, \
         help="Path to the truecaser model. Empty ("") to disable.", default="truecaser/spanish.dist")
+    parser.add_argument("-k", "--skip_existing", action="store_true", \
+        help="Skip existing output files", default=False)
 
     args = parser.parse_args()
     
@@ -57,6 +60,7 @@ def main():
     store_original : bool = args.store_original
     aggregate_output : bool = args.aggregate_output
     truecaser_path : str = args.truecaser
+    skip_existing : bool = args.skip_existing
 
     tc = TrueCaser(truecaser_path) if truecaser_path else None
 
@@ -94,6 +98,7 @@ def main():
             store_original,
             aggregate_output,
             tc,
+            skip_existing,
         )
 
 def pipeline(
@@ -107,7 +112,12 @@ def pipeline(
         store_original : bool,
         aggregate_output : bool,
         tc: Optional[TrueCaser],
+        skip_existing: bool = False,
 ):
+    if skip_existing and os.path.exists(output_path):
+        tqdm.write(f"File {output_path} already exists. Skipping.")
+        return
+
     if input_format == "plain":
         ingestor = ingestors.PlainTextingestor(input_path)
     elif input_format == "jsonl":

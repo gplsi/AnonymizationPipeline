@@ -56,4 +56,5 @@ run-local:
 		--labels "input/$(INPUT_FILE).$(LABEL_VERSION).labels" \
 		--store_original \
 		--aggregate_output \
-		-a intelligent
+		-a intelligent \
+		-k
